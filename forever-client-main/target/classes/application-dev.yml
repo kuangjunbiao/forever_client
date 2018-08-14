@@ -1,0 +1,10 @@
+#服务接口    
+serverApiConfig:
+  #ip或域名
+  ip: 127.0.0.1
+  #端口
+  port: 8066
+  #协议
+  protocol: http
+  #登录验证接口
+  apiLogin: /api/usersale/login

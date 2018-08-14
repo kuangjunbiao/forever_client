@@ -1,0 +1,11 @@
+# 服务其他配置
+spring:
+  jmx:
+    enabled: false
+  profiles:
+    active: dev        # 标志启用哪个配置文件
+    
+# 日志管理
+logging:
+  config: classpath:logback-spring.xml
+  path: logs
