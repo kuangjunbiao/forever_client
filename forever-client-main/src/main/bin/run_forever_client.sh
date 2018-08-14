@@ -21,7 +21,7 @@ echo "Using CLASSPATH:   $CLASSPATH"
 
 nohup java $JAVA_OPTS \
     -classpath $CLASSPATH \
-    com.gaoan.forever.App >  output 2>&1 &
+    com.gaoan.forever.InitWindow >  output 2>&1 &
 
 if [ ! -z "run_forever_client_main.pid" ]; then
   echo $!> run_forever_client_main.pid

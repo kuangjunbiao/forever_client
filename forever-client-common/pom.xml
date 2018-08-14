@@ -36,6 +36,7 @@
 						<excludes>
 							<exclude>**/*.properties</exclude>
 							<exclude>**/*.xml</exclude>
+							<exclude>**/*.java</exclude>
 						</excludes>
 					</resource>
 					<resource>

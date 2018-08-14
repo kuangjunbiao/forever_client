@@ -392,23 +392,23 @@ public class CacheUtils {
 
     /**********************************************************************************************************/
 
-    private static StringRedisTemplate stringredisTemplate;
+    private static StringRedisTemplate StringredisTemplate;
 
     @Autowired
     public void setStringRedisTemplate(StringRedisTemplate redisTemplate) {
-	CacheUtils.stringredisTemplate = redisTemplate;
+	CacheUtils.StringredisTemplate = redisTemplate;
     }
 
     public static List<Object> getHashOpsByFielString(String key, Collection<Object> fieldList) {
-	return stringredisTemplate.opsForHash().multiGet(key, fieldList);
+	return StringredisTemplate.opsForHash().multiGet(key, fieldList);
     }
 
     public static Object getHashOpsByFielString(String key, String field) {
-	return stringredisTemplate.opsForHash().get(key, field);
+	return StringredisTemplate.opsForHash().get(key, field);
     }
 
     public static Map<Object, Object> getStringHashOps(String key) {
-	return stringredisTemplate.opsForHash().entries(key);
+	return StringredisTemplate.opsForHash().entries(key);
     }
 
     /**
@@ -420,18 +420,18 @@ public class CacheUtils {
      * @return
      */
     public static Long incrementByString(String key, String hashKey, long delta) {
-	return stringredisTemplate.opsForHash().increment(key, hashKey, delta);
+	return StringredisTemplate.opsForHash().increment(key, hashKey, delta);
     }
 
     public static Long incrementByString(String key, long delta) {
-	return stringredisTemplate.opsForValue().increment(key, delta);
+	return StringredisTemplate.opsForValue().increment(key, delta);
     }
 
     public static Set<Object> getHKeysString(String key) {
-	return stringredisTemplate.opsForHash().keys(key);
+	return StringredisTemplate.opsForHash().keys(key);
     }
 
     public static void delString(String key) {
-	stringredisTemplate.delete(key);
+	StringredisTemplate.delete(key);
     }
 }

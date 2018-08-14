@@ -116,7 +116,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>com.gaoan.forever.App</mainClass>
+									<mainClass>com.gaoan.forever.InitWindow</mainClass>
 									<addClasspath>true</addClasspath>
 									<classpathPrefix>lib/</classpathPrefix>
 								</manifest>

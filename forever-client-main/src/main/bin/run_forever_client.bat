@@ -12,7 +12,7 @@ set tempPath=./lib
 set "PATH=%PATH%;%tempPath%"
 echo "%PATH%"
 
-set MAINCLASS=com.gaoan.forever.App
+set MAINCLASS=com.gaoan.forever.InitWindow
 
 java -jar forever-client-main-1.0-SNAPSHOT.jar
 

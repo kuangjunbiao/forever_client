@@ -9,12 +9,25 @@
     <fileSets>
         <fileSet>
             <directory>src/main/bin</directory>
+            <excludes>
+            	<exclude>**/*.sh</exclude>
+            </excludes>
             <outputDirectory>/</outputDirectory>
         </fileSet>  
         <fileSet>
             <filtered>true</filtered>
             <directory>src/main/resources</directory>
+            <excludes>
+            	<exclude>profiles/**</exclude>
+            </excludes>
             <outputDirectory>/</outputDirectory>  
+        </fileSet>
+        <fileSet>
+            <directory>config/properties</directory>
+            <excludes>
+            	<exclude>**/log4j.properties</exclude>
+            </excludes>
+            <outputDirectory>/config/properties</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>../forever-client-common/src/main/resources</directory>

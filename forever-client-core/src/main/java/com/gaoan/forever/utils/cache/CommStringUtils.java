@@ -13,9 +13,9 @@ public class CommStringUtils {
      * 将ErrorStack转化为String.
      */
     public static String getStackTraceAsString(Throwable e) {
-        StringWriter stringWriter = new StringWriter();
-        e.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
+        StringWriter StringWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(StringWriter));
+        return StringWriter.toString();
     }
 
     /**
