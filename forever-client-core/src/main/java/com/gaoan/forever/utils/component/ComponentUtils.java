@@ -117,7 +117,7 @@ public class ComponentUtils {
 
 			// 当前页,每页数据,总数据标签生成
 			JLabel currPageLable = new JLabel(curPage + "/" + pageTotal);
-			currPageLable.setBounds(510, 30, 20, 30);
+			currPageLable.setBounds(510, 30, 80, 30);
 			JLabel pageSizeLable = new JLabel("每页" + pageSize + "条");
 			pageSizeLable.setBounds(540, 30, 80, 30);
 			JLabel totalLable = new JLabel("共" + total + "条数据");
