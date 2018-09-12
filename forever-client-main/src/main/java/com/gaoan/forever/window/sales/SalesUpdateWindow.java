@@ -2,9 +2,12 @@ package com.gaoan.forever.window.sales;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -180,24 +183,31 @@ public class SalesUpdateWindow {
 		sizeNameLabel.setBounds(80, 140, 80, 35);
 		sizeComboBox.setBounds(160, 145, 140, 25);
 
+		// 吊牌价格BOX
+		JLabel tagPriceLabel = new JLabel(MessageInfoConstant.TAG_PRICE);
+		JTextField tagPriceText = new JTextField(model.getTagPrice().setScale(0, BigDecimal.ROUND_UP).toPlainString());
+
+		tagPriceLabel.setBounds(80, 180, 80, 35);
+		tagPriceText.setBounds(160, 185, 140, 25);
+
 		// 成交价BOX
 		JLabel sellPriceLabel = new JLabel(MessageInfoConstant.SELL_PRICE);
 		JTextField sellPriceText = new JTextField(
 				model.getSellPrice().setScale(0, BigDecimal.ROUND_UP).toPlainString());
-		sellPriceLabel.setBounds(80, 180, 80, 35);
-		sellPriceText.setBounds(160, 185, 140, 25);
+		sellPriceLabel.setBounds(80, 220, 80, 35);
+		sellPriceText.setBounds(160, 225, 140, 25);
+
+		BigDecimal discount = model.getSellPrice().divide(model.getTagPrice(), 2, BigDecimal.ROUND_DOWN)
+				.multiply(BigDecimal.TEN).setScale(1, BigDecimal.ROUND_DOWN);
+		// 折扣BOX
+		JLabel discountLabel = new JLabel(MessageFormat.format("约{0}折", discount.toPlainString()));
+		discountLabel.setBounds(310, 220, 80, 35);
 
 		// 數量BOX
 		JLabel qtyLabel = new JLabel(MessageInfoConstant.QTY);
 		JTextField qtyText = new JTextField(String.valueOf(model.getQuantity()));
-		qtyLabel.setBounds(80, 220, 80, 35);
-		qtyText.setBounds(160, 225, 140, 25);
-
-		// 吊牌价格BOX
-		JLabel tagPriceLabel = new JLabel(MessageInfoConstant.TAG_PRICE);
-		JTextField tagPriceText = new JTextField(model.getTagPrice().setScale(0, BigDecimal.ROUND_UP).toPlainString());
-		tagPriceLabel.setBounds(80, 260, 80, 35);
-		tagPriceText.setBounds(160, 265, 140, 25);
+		qtyLabel.setBounds(80, 260, 80, 35);
+		qtyText.setBounds(160, 265, 140, 25);
 
 		// 封装支付方式Vector
 		Vector<KeyValBoxVo> payTypeVector = new Vector<KeyValBoxVo>();
@@ -236,12 +246,13 @@ public class SalesUpdateWindow {
 		panel.add(colorComboBox);
 		panel.add(sizeNameLabel);
 		panel.add(sizeComboBox);
-		panel.add(sellPriceLabel);
-		panel.add(sellPriceText);
-		panel.add(qtyLabel);
-		panel.add(qtyText);
 		panel.add(tagPriceLabel);
 		panel.add(tagPriceText);
+		panel.add(sellPriceLabel);
+		panel.add(sellPriceText);
+		panel.add(discountLabel);
+		panel.add(qtyLabel);
+		panel.add(qtyText);
 		panel.add(payTypeLabel);
 		panel.add(payTypeComboBox);
 		panel.add(remarkLabel);
@@ -259,6 +270,7 @@ public class SalesUpdateWindow {
 		paramVo.setPriceText(sellPriceText);
 		paramVo.setQtyText(qtyText);
 		paramVo.setTagPriceText(tagPriceText);
+		paramVo.setDiscountLabel(discountLabel);
 		paramVo.setPayTypeComboBox(payTypeComboBox);
 		paramVo.setRemarkArea(remarkArea);
 		paramVo.setConfirmButton(confirmBtn);
@@ -284,6 +296,7 @@ public class SalesUpdateWindow {
 		JTextField qtyText = paramVo.getQtyText();
 		KeyValComboBox<KeyValBoxVo> payTypeComboBox = paramVo.getPayTypeComboBox();
 		JTextField tagPriceText = paramVo.getTagPriceText();
+		JLabel discountLabel = paramVo.getDiscountLabel();
 		JTextArea remarkArea = paramVo.getRemarkArea();
 		JButton confirmBtn = paramVo.getConfirmButton();
 		JButton cancelBtn = paramVo.getCancelButton();
@@ -314,6 +327,42 @@ public class SalesUpdateWindow {
 						ComponentUtils.initBoxData(goodsNameOptions, goodsList);
 					}
 				}
+			}
+		});
+
+		priceText.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				logger.info("priceText失去焦点.");
+				if (StringUtils.isNotEmpty(tagPriceText.getText()) && StringUtils.isNotEmpty(priceText.getText())) {
+					BigDecimal discount = new BigDecimal(priceText.getText())
+							.divide(new BigDecimal(tagPriceText.getText()), 2, BigDecimal.ROUND_DOWN)
+							.multiply(BigDecimal.TEN).setScale(1, BigDecimal.ROUND_DOWN);
+					discountLabel.setText(MessageFormat.format("约{0}折", discount.toPlainString()));
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				logger.info("priceText获取焦点.");
+			}
+		});
+
+		tagPriceText.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				logger.info("tagPriceText失去焦点.");
+				if (StringUtils.isNotEmpty(tagPriceText.getText()) && StringUtils.isNotEmpty(priceText.getText())) {
+					BigDecimal discount = new BigDecimal(priceText.getText())
+							.divide(new BigDecimal(tagPriceText.getText()), 2, BigDecimal.ROUND_DOWN)
+							.multiply(BigDecimal.TEN).setScale(1, BigDecimal.ROUND_DOWN);
+					discountLabel.setText(MessageFormat.format("约{0}折", discount.toPlainString()));
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				logger.info("tagPriceText获取焦点.");
 			}
 		});
 

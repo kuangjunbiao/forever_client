@@ -56,6 +56,10 @@ public class ServerApiConfig {
 	private static String apiGetPurchaseNameList = "/api/stock/getPurchaseNameList";
 	// 获取商品名称
 	private static String apiGetGoodsList = "/api/stock/getGoodsList";
+	// 获取商品颜色名称
+	private static String apiGetGoodsColorList = "/api/stock/getGoodsColorList";
+	// 获取商品尺寸名称
+	private static String apiGetGoodsSizeList = "/api/stock/getGoodsSizeList";
 
 	// *******************************用户列表**********************************
 	// 用户注册
@@ -281,6 +285,22 @@ public class ServerApiConfig {
 
 	public static void setApiGetGoodsList(String apiGetGoodsList) {
 		ServerApiConfig.apiGetGoodsList = apiGetGoodsList;
+	}
+
+	public static String getApiGetGoodsColorList() {
+		return getUrl(apiGetGoodsColorList);
+	}
+
+	public static void setApiGetGoodsColorList(String apiGetGoodsColorList) {
+		ServerApiConfig.apiGetGoodsColorList = apiGetGoodsColorList;
+	}
+
+	public static String getApiGetGoodsSizeList() {
+		return getUrl(apiGetGoodsSizeList);
+	}
+
+	public static void setApiGetGoodsSizeList(String apiGetGoodsSizeList) {
+		ServerApiConfig.apiGetGoodsSizeList = apiGetGoodsSizeList;
 	}
 
 	public static String getApiInsertUser() {

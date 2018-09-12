@@ -2,9 +2,12 @@ package com.gaoan.forever.window.sales;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +53,8 @@ public class SalesInsertWindow {
 	private static final String INSERT_SALES_URL = ServerApiConfig.getApiInsertSalesOrder();
 	private static final String PURCHASE_NAME_LIST_URL = ServerApiConfig.getApiGetPurchaseNameList();
 	private static final String GOODS_LIST_URL = ServerApiConfig.getApiGetGoodsList();
+	private static final String GOODS_COLOR_LIST_URL = ServerApiConfig.getApiGetGoodsColorList();
+	private static final String GOODS_SIZE_LIST_URL = ServerApiConfig.getApiGetGoodsSizeList();
 	private static final String COLOR_LIST_URL = ServerApiConfig.getApiGetColorList();
 	private static final String SIZE_LIST_URL = ServerApiConfig.getApiGetSizeList();
 
@@ -160,23 +165,27 @@ public class SalesInsertWindow {
 		sizeNameLabel.setBounds(80, 140, 80, 35);
 		sizeComboBox.setBounds(160, 145, 140, 25);
 
+		// 吊牌价格BOX
+		JLabel tagPriceLabel = new JLabel(MessageInfoConstant.TAG_PRICE);
+		JTextField tagPriceText = new JTextField();
+		tagPriceLabel.setBounds(80, 180, 80, 35);
+		tagPriceText.setBounds(160, 185, 140, 25);
+
 		// 成交价格BOX
 		JLabel sellPriceLabel = new JLabel(MessageInfoConstant.SELL_PRICE);
 		JTextField sellPriceText = new JTextField();
-		sellPriceLabel.setBounds(80, 180, 80, 35);
-		sellPriceText.setBounds(160, 185, 140, 25);
+		sellPriceLabel.setBounds(80, 220, 80, 35);
+		sellPriceText.setBounds(160, 225, 140, 25);
+
+		// 折扣BOX
+		JLabel discountLabel = new JLabel();
+		discountLabel.setBounds(310, 220, 80, 35);
 
 		// 數量BOX
 		JLabel qtyLabel = new JLabel(MessageInfoConstant.QTY);
 		JTextField qtyText = new JTextField();
-		qtyLabel.setBounds(80, 220, 80, 35);
-		qtyText.setBounds(160, 225, 140, 25);
-
-		// 吊牌价格BOX
-		JLabel tagPriceLabel = new JLabel(MessageInfoConstant.TAG_PRICE);
-		JTextField tagPriceText = new JTextField();
-		tagPriceLabel.setBounds(80, 260, 80, 35);
-		tagPriceText.setBounds(160, 265, 140, 25);
+		qtyLabel.setBounds(80, 260, 80, 35);
+		qtyText.setBounds(160, 265, 140, 25);
 
 		// 封装支付方式Vector
 		Vector<KeyValBoxVo> payTypeVector = new Vector<KeyValBoxVo>();
@@ -214,12 +223,13 @@ public class SalesInsertWindow {
 		panel.add(colorComboBox);
 		panel.add(sizeNameLabel);
 		panel.add(sizeComboBox);
-		panel.add(sellPriceLabel);
-		panel.add(sellPriceText);
-		panel.add(qtyLabel);
-		panel.add(qtyText);
 		panel.add(tagPriceLabel);
 		panel.add(tagPriceText);
+		panel.add(sellPriceLabel);
+		panel.add(sellPriceText);
+		panel.add(discountLabel);
+		panel.add(qtyLabel);
+		panel.add(qtyText);
 		panel.add(payTypeLabel);
 		panel.add(payTypeComboBox);
 		panel.add(remarkLabel);
@@ -235,6 +245,7 @@ public class SalesInsertWindow {
 		paramVo.setSizeComboBox(sizeComboBox);
 		paramVo.setTagPriceText(tagPriceText);
 		paramVo.setPriceText(sellPriceText);
+		paramVo.setDiscountLabel(discountLabel);
 		paramVo.setQtyText(qtyText);
 		paramVo.setPayTypeComboBox(payTypeComboBox);
 		paramVo.setRemarkArea(remarkArea);
@@ -259,6 +270,7 @@ public class SalesInsertWindow {
 		JTextField qtyText = paramVo.getQtyText();
 		JTextField tagPriceText = paramVo.getTagPriceText();
 		JTextField priceText = paramVo.getPriceText();
+		JLabel discountLabel = paramVo.getDiscountLabel();
 		JTextArea remarkArea = paramVo.getRemarkArea();
 		JButton confirmBtn = paramVo.getConfirmButton();
 		JButton cancelBtn = paramVo.getCancelButton();
@@ -285,10 +297,144 @@ public class SalesInsertWindow {
 
 						// 列表第一个新增空字符串
 						goodsList.add(0, "");
+						// 颜色、尺寸列表下拉框重置选择
+						colorComboBox.setSelectedIndex(0);
+						sizeComboBox.setSelectedIndex(0);
 						// 初始化商品列表下拉框
 						ComponentUtils.initBoxData(goodsNameOptions, goodsList);
 					}
 				}
+			}
+		});
+
+		// 商品列表下拉框添加监听事件
+		goodsNameOptions.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// 处理选中的状态
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					logger.info("选中: {} = {} = {}", goodsNameOptions.getSelectedIndex(),
+							goodsNameOptions.getSelectedItem(), goodsNameOptions.getName());
+
+					String goodsName = (String) goodsNameOptions.getSelectedItem();
+					if (org.apache.commons.lang3.StringUtils.isNotBlank(goodsName)) {
+
+						Map<String, Object> reqParam = new HashMap<String, Object>();
+						reqParam.put("purchaseOrderName", (String) purchaseNameOptions.getSelectedItem());
+						reqParam.put("goodsName", (String) goodsNameOptions.getSelectedItem());
+
+						Map<String, Object> colorMap = CallUtils.post(insertJFrame, GOODS_COLOR_LIST_URL,
+								GsonUtils.toJson(reqParam), MessageEnum.SEARCH_MSG);
+
+						if (colorMap != null && !colorMap.isEmpty()) {
+							/* 初始化商品顏色列表下拉框 */
+							List<ColorInfoModel> goodsColorList = GsonUtils.fromJson(colorMap.get("list"),
+									new TypeToken<List<ColorInfoModel>>() {
+							});
+
+							List<Map<String, String>> colorMapList = new ArrayList<Map<String, String>>();
+							if (CollectionUtils.isNotEmpty(goodsColorList)) {
+								colorMapList.add(new HashMap<String, String>());
+								goodsColorList.forEach((color) -> {
+									Map<String, String> map = new HashMap<String, String>();
+									map.put("key", color.getId() == null ? "" : color.getId().toString());
+									map.put("value", color.getColorName());
+									colorMapList.add(map);
+								});
+							}
+							ComponentUtils.initBoxData(colorComboBox, colorMapList);
+
+							// 初始化吊牌价
+							BigDecimal tagPrice = (BigDecimal) colorMap.get("tagPrice");
+							tagPriceText.setText(tagPrice == null ? "" : String.valueOf(tagPrice.longValue()));
+						}
+					} else {
+						colorComboBox.setSelectedIndex(0);
+						sizeComboBox.setSelectedIndex(0);
+					}
+				}
+			}
+		});
+
+		// 颜色列表下拉框添加监听事件
+		colorComboBox.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// 处理选中的状态
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					logger.info("选中: {} = {} = {}", colorComboBox.getSelectedIndex(), colorComboBox.getSelectedItem(),
+							colorComboBox.getName());
+
+					KeyValBoxVo colorOption = (KeyValBoxVo) colorComboBox.getSelectedItem();
+					if (org.apache.commons.lang3.StringUtils.isNotBlank(colorOption.getValue())) {
+
+						Map<String, Object> reqParam = new HashMap<String, Object>();
+						reqParam.put("purchaseOrderName", (String) purchaseNameOptions.getSelectedItem());
+						reqParam.put("goodsName", (String) goodsNameOptions.getSelectedItem());
+						reqParam.put("colorId", Long.valueOf(colorComboBox.getSelectedKey()));
+
+						Map<String, Object> sizeMap = CallUtils.post(insertJFrame, GOODS_SIZE_LIST_URL,
+								GsonUtils.toJson(reqParam), MessageEnum.SEARCH_MSG);
+
+						if (sizeMap != null && !sizeMap.isEmpty()) {
+							/* 初始化尺寸列表下拉框 */
+							List<SizeInfoModel> goodsSizeList = GsonUtils.fromJson(sizeMap.get("list"),
+									new TypeToken<List<SizeInfoModel>>() {
+							});
+
+							List<Map<String, String>> sizeMapList = new ArrayList<Map<String, String>>();
+							if (CollectionUtils.isNotEmpty(goodsSizeList)) {
+								sizeMapList.add(new HashMap<String, String>());
+								goodsSizeList.forEach((size) -> {
+									Map<String, String> map = new HashMap<String, String>();
+									map.put("key", size.getId() == null ? "" : size.getId().toString());
+									map.put("value", size.getSizeName());
+									sizeMapList.add(map);
+								});
+							}
+							ComponentUtils.initBoxData(sizeComboBox, sizeMapList);
+						}
+					} else {
+						sizeComboBox.setSelectedIndex(0);
+					}
+				}
+			}
+		});
+
+		priceText.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				logger.info("priceText失去焦点.");
+				if (StringUtils.isNotEmpty(tagPriceText.getText()) && StringUtils.isNotEmpty(priceText.getText())) {
+					BigDecimal discount = new BigDecimal(priceText.getText())
+							.divide(new BigDecimal(tagPriceText.getText()), 2, BigDecimal.ROUND_DOWN)
+							.multiply(BigDecimal.TEN).setScale(1, BigDecimal.ROUND_DOWN);
+					discountLabel.setText(MessageFormat.format("约{0}折", discount.toPlainString()));
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				logger.info("priceText获取焦点.");
+			}
+		});
+
+		tagPriceText.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				logger.info("tagPriceText失去焦点.");
+				if (StringUtils.isNotEmpty(tagPriceText.getText()) && StringUtils.isNotEmpty(priceText.getText())) {
+					BigDecimal discount = new BigDecimal(priceText.getText())
+							.divide(new BigDecimal(tagPriceText.getText()), 2, BigDecimal.ROUND_DOWN)
+							.multiply(BigDecimal.TEN).setScale(1, BigDecimal.ROUND_DOWN);
+					discountLabel.setText(MessageFormat.format("约{0}折", discount.toPlainString()));
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				logger.info("tagPriceText获取焦点.");
 			}
 		});
 

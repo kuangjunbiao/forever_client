@@ -62,7 +62,7 @@ public class KeyValComboBox<E> extends JComboBox<E> {
 			if (obj instanceof String || obj instanceof Integer || obj instanceof Long) {
 				for (int index = 0; index < getItemCount(); index++) {
 					KeyValBoxVo po = (KeyValBoxVo) getItemAt(index);
-					if (po.getValue().equals(obj.toString())) {
+					if (obj.toString().equals(po.getValue())) {
 						super.setSelectedIndex(index);
 					}
 				}

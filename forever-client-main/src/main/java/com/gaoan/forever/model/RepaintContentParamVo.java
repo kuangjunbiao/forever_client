@@ -7,6 +7,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -49,6 +50,7 @@ public class RepaintContentParamVo<T> implements Serializable {
 	private JTextField qtyText;
 	private JTextField tagPriceText;
 	private JTextField priceText;
+	private JLabel discountLabel;
 	private JTextField colorNameText;
 	private JTextField sizeNameText;
 	private JTextField sizeCodeText;
@@ -445,6 +447,14 @@ public class RepaintContentParamVo<T> implements Serializable {
 
 	public void setExportConsumeBtn(JButton exportConsumeBtn) {
 		this.exportConsumeBtn = exportConsumeBtn;
+	}
+
+	public JLabel getDiscountLabel() {
+		return discountLabel;
+	}
+
+	public void setDiscountLabel(JLabel discountLabel) {
+		this.discountLabel = discountLabel;
 	}
 
 }

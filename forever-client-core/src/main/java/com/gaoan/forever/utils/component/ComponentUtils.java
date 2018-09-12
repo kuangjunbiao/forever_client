@@ -41,6 +41,9 @@ public class ComponentUtils {
 		for (String str : list) {
 			box.addItem(str);
 		}
+		if (list.size() == 2) {
+			box.setSelectedIndex(1);
+		}
 	}
 
 	/**
@@ -58,6 +61,10 @@ public class ComponentUtils {
 		for (Map<String, String> map : list) {
 			keyVal = new KeyValBoxVo(map.get("key"), map.get("value"));
 			box.addItem(keyVal);
+		}
+		if (list.size() == 2) {
+			box.setSelectedIndex(1);
+			// box.setSelectedItem(list.get(1).get("value"));
 		}
 	}
 
@@ -104,20 +111,20 @@ public class ComponentUtils {
 			JButton firstPageBtn = new JButton(MessageInfoConstant.FIRST_PAGE);
 			JButton previousPageBtn = new JButton(MessageInfoConstant.PREVIOUS_PAGE);
 
-			firstPageBtn.setBounds(330, 30, 80, 30);
-			previousPageBtn.setBounds(420, 30, 80, 30);
+			firstPageBtn.setBounds(320, 30, 80, 30);
+			previousPageBtn.setBounds(410, 30, 80, 30);
 
 			panel.add(firstPageBtn);
 			panel.add(previousPageBtn);
 			// 第一页和上一页的按钮生成
 			if (!isFirst && pageTotal != 0) {
-				bindEvent(firstPageBtn, url, firstPage, pageSize, conditionModel, jf, tableModel, mainBox);
+				bindEvent(firstPageBtn, url, 1, pageSize, conditionModel, jf, tableModel, mainBox);
 				bindEvent(previousPageBtn, url, prePage, pageSize, conditionModel, jf, tableModel, mainBox);
 			}
 
 			// 当前页,每页数据,总数据标签生成
 			JLabel currPageLable = new JLabel(curPage + "/" + pageTotal);
-			currPageLable.setBounds(510, 30, 80, 30);
+			currPageLable.setBounds(500, 30, 80, 30);
 			JLabel pageSizeLable = new JLabel("每页" + pageSize + "条");
 			pageSizeLable.setBounds(540, 30, 80, 30);
 			JLabel totalLable = new JLabel("共" + total + "条数据");
@@ -129,14 +136,14 @@ public class ComponentUtils {
 
 			JButton nextPageBtn = new JButton(MessageInfoConstant.NEXT_PAGE);
 			JButton lastPageBtn = new JButton(MessageInfoConstant.LAST_PAGE);
-			nextPageBtn.setBounds(670, 30, 80, 30);
-			lastPageBtn.setBounds(760, 30, 90, 30);
+			nextPageBtn.setBounds(680, 30, 80, 30);
+			lastPageBtn.setBounds(770, 30, 90, 30);
 			panel.add(nextPageBtn);
 			panel.add(lastPageBtn);
 			// 下一页和最后一页按钮的生成
 			if (!isLast) {
 				bindEvent(nextPageBtn, url, nextPage, pageSize, conditionModel, jf, tableModel, mainBox);
-				bindEvent(lastPageBtn, url, lastPage, pageSize, conditionModel, jf, tableModel, mainBox);
+				bindEvent(lastPageBtn, url, pageTotal, pageSize, conditionModel, jf, tableModel, mainBox);
 			}
 		}
 
